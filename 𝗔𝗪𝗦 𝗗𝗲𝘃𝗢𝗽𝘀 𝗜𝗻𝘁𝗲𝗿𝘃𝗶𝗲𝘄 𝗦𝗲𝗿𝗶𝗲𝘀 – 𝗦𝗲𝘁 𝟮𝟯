@@ -1,37 +1,26 @@
-DevOps Interview Preparation
+# DevOps Interview Preparation
 
-As a part of my interview preparation journey, I have gathered a set of DevOps interview questions from various sources.
+As a part of my **interview preparation journey**, I have gathered a set of **DevOps interview questions** from various sources.
 
 I will be sharing these questions regularly to help with interview preparation.
 
-If you are also preparing for interviews, especially in AWS DevOps, feel free to take a look and use these questions as part of your preparation.
+If you are also preparing for interviews, especially in **AWS DevOps**, feel free to take a look and use these questions as part of your preparation.
 
-Focus Areas
+## Focus Areas
 
-AWS
+- AWS
+- DevOps
+- CI/CD
+- Git & GitHub
+- Docker
+- Kubernetes
+- Jenkins
+- Terraform
+- Linux
+- Cloud & Infrastructure
+- Monitoring
+- Security
 
-DevOps
-
-CI/CD
-
-Git & GitHub
-
-Docker
-
-Kubernetes
-
-Jenkins
-
-Terraform
-
-Linux
-
-Cloud & Infrastructure
-
-Monitoring
-
-Security
-
-Goal: Learn, practice, and be interview-ready.
+> **Goal:** Learn, practice, and be interview-ready.
 
 Good luck with your interview preparation! 🚀
