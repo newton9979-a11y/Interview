@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>DevOps Real-Time Scenarios — Study Guide</title>
+<style>
+:root{
+  --bg:#f6f7f5; --surface:#ffffff; --ink:#12181a; --sub:#5b6668; --line:#dfe4e2;
+  --accent:#0f6e5c; --accent-soft:#e2f3ee; --code-bg:#0f1a17; --code-ink:#c9f2e2;
+  --tag-aws:#b8590c; --tag-k8s:#3159a8; --tag-cicd:#7a3ea0; --tag-net:#a3320f; --tag-infra:#1f7a3d;
+  box-sizing:border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f1412; --surface:#171e1c; --ink:#eef3f1; --sub:#9db0aa; --line:#2a3532;
+    --accent:#3fd6ac; --accent-soft:#123a30; --code-bg:#0a0f0d; --code-ink:#8ff0cc;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f1412; --surface:#171e1c; --ink:#eef3f1; --sub:#9db0aa; --line:#2a3532;
+  --accent:#3fd6ac; --accent-soft:#123a30; --code-bg:#0a0f0d; --code-ink:#8ff0cc;
+}
+html{scroll-padding-top: env(safe-area-inset-top, 0px);}
+*{margin:0;padding:0;}
+body{
+  background:var(--bg); color:var(--ink);
+  font-family:"Segoe UI", ui-sans-serif, system-ui, -apple-system, Roboto, sans-serif;
+  line-height:1.5;
+}
+.wrap{max-width:820px; margin:0 auto; padding:0 20px 80px;}
+header.hero{
+  padding: calc(40px + env(safe-area-inset-top,0px)) 20px 32px;
+  border-bottom:1px solid var(--line);
+}
+header.hero .inner{max-width:820px;margin:0 auto;}
+.kicker{font-size:13px; color:var(--accent); font-weight:600; letter-spacing:.02em;}
+h1{font-size:clamp(28px,4vw,38px); line-height:1.15; margin-top:8px; font-weight:700;}
+.lede{color:var(--sub); margin-top:10px; max-width:60ch; font-size:15.5px;}
+.meta-row{display:flex; gap:16px; flex-wrap:wrap; margin-top:20px; font-size:13px; color:var(--sub);}
+.meta-row strong{color:var(--ink);}
+
+nav.toc{margin:28px 0 8px; padding:16px 18px; background:var(--surface); border:1px solid var(--line); border-radius:10px;}
+nav.toc summary{cursor:pointer; font-weight:600; font-size:14px;}
+nav.toc ol{margin:14px 0 2px 20px; columns:2; font-size:13.5px; gap:20px;}
+nav.toc li{margin-bottom:6px; break-inside:avoid;}
+nav.toc a{color:var(--sub); text-decoration:none;}
+nav.toc a:hover{color:var(--accent);}
+
+section.category{margin-top:44px;}
+.category > h2{font-size:14px; text-transform:none; color:var(--sub); border-bottom:1px solid var(--line); padding-bottom:10px; font-weight:600;}
+
+.card{
+  background:var(--surface); border:1px solid var(--line); border-radius:10px;
+  margin-top:16px; overflow:hidden; scroll-margin-top: 16px;
+}
+.card > summary{
+  list-style:none; cursor:pointer; padding:16px 18px; display:flex; align-items:baseline; gap:10px; justify-content:space-between;
+}
+.card > summary::-webkit-details-marker{display:none;}
+.card summary .q{font-weight:600; font-size:15.5px;}
+.card summary .chev{color:var(--sub); font-size:13px; flex:none;}
+.card[open] summary .chev::after{content:"hide"}
+.card:not([open]) summary .chev::after{content:"reveal"}
+.tag{display:inline-block; font-size:11px; font-weight:600; padding:2px 8px; border-radius:20px; margin-right:8px; color:#fff; vertical-align:middle;}
+.tag.aws{background:var(--tag-aws);} .tag.k8s{background:var(--tag-k8s);} .tag.cicd{background:var(--tag-cicd);}
+.tag.net{background:var(--tag-net);} .tag.infra{background:var(--tag-infra);}
+
+.card .body{padding:0 18px 20px; border-top:1px solid var(--line);}
+.card .body h4{font-size:12.5px; text-transform:uppercase; letter-spacing:.04em; color:var(--sub); margin:16px 0 6px;}
+.card .body ul{margin-left:18px;}
+.card .body li{margin-bottom:5px; font-size:14.5px;}
+code, .cmd{
+  font-family:"SFMono-Regular", Consolas, Menlo, monospace; font-size:13px;
+  background:var(--code-bg); color:var(--code-ink); padding:2px 6px; border-radius:4px;
+}
+pre.cmd-block{background:var(--code-bg); color:var(--code-ink); padding:12px 14px; border-radius:8px; overflow-x:auto; font-family:"SFMono-Regular", Consolas, Menlo, monospace; font-size:13px; margin-top:6px;}
+.tip{margin-top:14px; padding:10px 12px; background:var(--accent-soft); border-left:3px solid var(--accent); border-radius:6px; font-size:13.5px;}
+.tip strong{color:var(--accent);}
+
+footer{margin-top:60px; padding-top:20px; border-top:1px solid var(--line); font-size:12.5px; color:var(--sub); padding-bottom: env(safe-area-inset-bottom, 0px);}
+
+.theme-toggle{
+  position:fixed; top: calc(14px + env(safe-area-inset-top,0px)); right:14px;
+  background:var(--surface); border:1px solid var(--line); color:var(--ink);
+  border-radius:20px; padding:6px 12px; font-size:12px; cursor:pointer;
+}
+@media (max-width:640px){
+  nav.toc ol{columns:1;}
+}
+</style>
+</head>
+<body>
+<button class="theme-toggle" onclick="toggleTheme()">Toggle theme</button>
+
+<header class="hero">
+  <div class="inner">
+    <div class="kicker">DevOps · SRE · Cloud</div>
+    <h1>Real-Time Troubleshooting Scenarios</h1>
+    <p class="lede">A click-to-reveal study guide for DevOps interviews. Read the scenario, think through your answer, then reveal root causes, diagnostic commands, the fix, and how to prevent it next time.</p>
+    <div class="meta-row">
+      <span><strong>16</strong> scenarios</span>
+      <span><strong>5</strong> categories</span>
+      <span>Tap any card to expand</span>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+<details class="toc" open>
+<summary>Jump to a scenario</summary>
+<ol id="toc-list"></ol>
+</details>
+
+<section class="category" id="cat-compute">
+<h2>Compute &amp; OS</h2>
+
+<details class="card" id="s1">
+<summary><span><span class="tag aws">AWS</span><span class="q">Production EC2 CPU spikes to 100%</span></span><span class="chev"></span></summary>
+<div class="body">
+<h4>Likely root causes</h4>
+<ul>
+<li>Runaway process or infinite loop in the application</li>
+<li>Traffic spike beyond current capacity</li>
+<li>A cron job or batch process overlapping with peak hours</li>
+<li>Memory pressure causing excessive garbage collection (CPU thrash)</li>
+</ul>
+<h4>Diagnose</h4>
+<pre class="cmd-block"># Check the trend first — is this sustained or a spike?
+CloudWatch → EC2 → CPUUtilization (1-min granularity)
+
+# SSH in and find the offending process
+top          # sort by CPU, note PID
+ps aux --sort=-%cpu | head
+df -h        # rule out disk pressure
+free -m      # rule out memory pressure causing swap thrash</pre>
+<h4>Fix</h4>
+<ul>
+<li>Kill or restart only the affected service — don't reboot the whole box blindly on prod</li>
+<li>If it's load-driven, scale out (Auto Scaling Group) or scale up the instance type</li>
+<li>If it's a bad deploy, roll back first, investigate after</li>
+</ul>
+<h4>Prevent</h4>
+<ul>
+<li>CloudWatch alarm at 70–80% CPU with SNS notification</li>
+<li>Auto Scaling policy tied to CPU or request-count target tracking</li>
+<li>Profile the app to find hot code paths before it becomes an incident</li>
+</ul>
+<div class="tip"><strong>Interview angle:</strong> Interviewers want to see you separate "stop the bleeding" (restart/scale) from "fix the disease" (root cause + prevention). Say both.</div>
+</div>
+</details>
+
+<details class="card" id="s2">
+<summary><span><span class="tag aws">AWS</span><span class="q">App runs on EC2 but isn't reachable from the browser</span></span><span class="chev"></span></summary>
+<div class="body">
+<h4>Checklist, in order</h4>
+<ul>
+<li><strong>Security Group</strong> — is the inbound rule open on 80/443/8080 from the right source (0.0.0.0/0 or the ALB's SG)?</li>
+<li><strong>NACL</strong> — subnet-level rules are stateless; check both inbound and outbound</li>
+<li><strong>Load Balancer target group health checks</strong> — is the instance marked <em>unhealthy</em>? Check the health-check path and port</li>
+<li><strong>Web server process</strong> — is nginx/httpd actually running and bound to the right port?</li>
+<li><strong>App/access logs</strong> — 502/504 from the LB usually means the backend refused or timed out</li>
+</ul>
+<h4>Diagnose</h4>
+<pre class="cmd-block">curl -I localhost:8080          # from inside the instance — isolates app vs network
+sudo ss -tlnp | grep 8080       # is anything actually listening?
+sudo systemctl status nginx
+tail -f /var/log/nginx/error.log</pre>
+<div class="tip"><strong>Interview angle:</strong> Work outside-in or inside-out consistently — most candidates jump around. Say: "I'd start from the client and work back: DNS → LB → SG/NACL → instance → process."</div>
+</div>
+</details>
+
+<details class="card" id="s3">
+<summary><span><span class="tag net">Networking</span><span class="q">ALB returns 502/504 Bad Gateway intermittently</span></span><span class="chev"></span></summary>
+<div class="body">
+<h4>Root causes</h4>
+<ul>
+<li>502: backend closed the connection or returned a malformed response (app crash, out-of-memory kill)</li>
+<li>504: backend took longer than the LB's idle timeout to respond</li>
+<li>Keep-alive timeout mismatch between the ALB and the web server (ALB idle timeout must be ≤ web server keep-alive)</li>
+</ul>
+<h4>Fix</h4>
+<ul>
+<li>Check target group health-check history and deregistration events</li>
+<li>Increase ALB idle timeout or reduce backend response time for 504s</li>
+<li>Align nginx <code>keepalive_timeout</code> with the ALB's idle timeout for 502s</li>
+<li>Check app logs at the exact timestamp of the 502 for crashes/OOM</li>
+</ul>
+</div>
+</details>
+
+<details class="card" id="s4">
+<summary><span><span class="tag infra">Infra</span><span class="q">Disk keeps filling up on a production Linux server</span></span><span class="chev"></span></summary>
+<div class="body">
+<h4>Diagnose</h4>
+<pre class="cmd-block">df -h                       # which mount is full
+du -sh /var/log/* | sort -rh | head    # biggest offenders, usually logs
+lsof +L1                    # deleted-but-open files still holding space</pre>
+<h4>Common causes &amp; fix</h4>
+<ul>
+<li>Unrotated application logs → configure <code>logrotate</code></li>
+<li>Docker images/containers piling up → <code>docker system prune</code></li>
+<li>A process holding a deleted file open (space not freed until the process restarts)</li>
+<li>Core dumps from a crashing service filling <code>/var/crash</code></li>
+</ul>
+<h4>Prevent</h4>
+<ul>
+<li>CloudWatch/Prometheus disk-usage alert at 75–80%</li>
+<li>Centralize logs (CloudWatch Logs, ELK/EFK) and ship off-box instead of retaining locally</li>
+</ul>
+</div>
+</details>
+</section>
+
+<section class="category" id="cat-k8s">
+<h2>Containers &amp; Kubernetes</h2>
+
+<details class="card" id="s5">
+<summary><span><span class="tag k8s">K8s</span><span class="q">Docker container is running but not accessible</span></span><span class="chev"></span></summary>
+<div class="body">
+<h4>Checklist</h4>
+<ul>
+<li>Confirm the port mapping is actually published: <code>docker ps</code> shows <code>0.0.0.0:8080-&gt;8080/tcp</code>?</li>
+<li>Read the container's own logs: <code>docker logs &lt;container&gt;</code></li>
+<li>The app inside the container must bind to <code>0.0.0.0</code>, not <code>127.0.0.1</code> — binding to localhost makes it unreachable from outside the container network namespace</li>
+<li>If this is Kubernetes: check the <strong>Service type</strong> (ClusterIP vs NodePort vs LoadBalancer) and confirm endpoints exist</li>
+</ul>
+<pre class="cmd-block">kubectl get endpoints &lt;service&gt;   # empty = selector doesn't match any pod labels
+kubectl get svc &lt;service&gt; -o wide</pre>
+<div class="tip"><strong>Common trap:</strong> an empty Endpoints object almost always means the Service's <code>selector</code> doesn't match the Pod's <code>labels</code> — not a networking problem at all.</div>
+</div>
+</details>
+
+<details class="card" id="s6">
+<summary><span><span class="tag k8s">K8s</span><span class="q">Pod is stuck in CrashLoopBackOff</span></span><span class="chev"></span></summary>
+<div class="body">
+<h4>Diagnose</h4>
+<pre class="cmd-block">kubectl describe pod &lt;pod&gt;      # events section — OOMKilled? failed probe? image pull error?
+kubectl logs &lt;pod&gt;               # current attempt
+kubectl logs &lt;pod&gt; --previous    # the crash BEFORE the restart — usually more useful</pre>
+<h4>Common causes</h4>
+<ul>
+<li>App crashes immediately on bad config/env var/missing secret</li>
+<li>Liveness probe misconfigured (too aggressive, killing a healthy-but-slow-starting app)</li>
+<li>OOMKilled — container hits its memory <code>limit</code></li>
+<li>Wrong image tag or entrypoint command</li>
+</ul>
+<h4>Fix</h4>
+<ul>
+<li>Fix the underlying cause, then <code>kubectl rollout restart deployment/&lt;name&gt;</code></li>
+<li>For OOM: raise the memory limit or fix a leak; for slow starts, add/raise <code>initialDelaySeconds</code> on probes</li>
+</ul>
+</div>
+</details>
+
+<details class="card" id="s7">
+<summary><span><span class="tag k8s">K8s</span><span class="q">Pod stuck in Pending state</span></span><span class="chev"></span></summary>
+<div class="body">
+<h4>Root causes</h4>
+<ul>
+<li>Insufficient CPU/memory on any node to satisfy the pod's <code>requests</code></li>
+<li>NodeSelector/affinity/taints excluding all available nodes</li>
+<li>PVC can't be bound — no matching StorageClass or PV, or the zone doesn't match</li>
+</ul>
+<pre class="cmd-block">kubectl describe pod &lt;pod&gt;     # Events will name the exact reason
+kubectl get nodes -o wide
+kubectl describe pvc &lt;pvc&gt;</pre>
+<h4>Fix</h4>
+<ul>
+<li>Scale the node group, or lower the pod's resource requests if over-provisioned</li>
+<li>Remove/adjust taints or tolerations</li>
+<li>Fix the StorageClass or provision the PV in the correct AZ</li>
+</ul>
+</div>
+</details>
+
+<details class="card" id="s8">
+<summary><span><span class="tag k8s">K8s</span><span class="q">A node shows status NotReady</span></span><span class="chev"></span></summary>
+<div class="body">
+<h4>Diagnose</h4>
+<pre class="cmd-block">kubectl describe node &lt;node&gt;         # Conditions section: MemoryPressure, DiskPressure, kubelet down?
+kubectl get pods -A -o wide | grep &lt;node&gt;
+# on the node itself:
+sudo systemctl status kubelet
+journalctl -u kubelet -f</pre>
+<h4>Common causes</h4>
+<ul>
+<li>kubelet crashed or lost network connectivity to the control plane</li>
+<li>Node under disk or memory pressure</li>
+<li>Container runtime (containerd/Docker) unresponsive</li>
+</ul>
+<h4>Fix</h4>
+<ul>
+<li>Restart kubelet/container runtime; if unrecoverable, cordon + drain and replace the node</li>
+<li><code>kubectl cordon &lt;node&gt;</code> then <code>kubectl drain &lt;node&gt; --ignore-daemonsets</code> before terminating it</li>
+</ul>
+</div>
+</details>
+
+<details class="card" id="s9">
+<summary><span><span class="tag k8s">K8s</span><span class="q">HPA isn't scaling the deployment despite high load</span></span><span class="chev"></span></summary>
+<div class="body">
+<h4>Common causes</h4>
+<ul>
+<li>Pods have no <code>resources.requests</code> set — HPA can't compute a percentage without a baseline</li>
+<li>Metrics Server isn't installed/running, so no metrics are available</li>
+<li><code>maxReplicas</code> already reached, or cluster has no node capacity to schedule new pods (Pending)</li>
+</ul>
+<pre class="cmd-block">kubectl get hpa
+kubectl top pods
+kubectl describe hpa &lt;name&gt;</pre>
+</div>
+</details>
+</section>
+
+<section class="category" id="cat-cicd">
+<h2>CI/CD</h2>
+
+<details class="card" id="s10">
+<summary><span><span class="tag cicd">CI/CD</span><span class="q">Jenkins pipeline fails at the build stage</span></span><span class="chev"></span></summary>
+<div class="body">
+<h4>Checklist</h4>
+<ul>
+<li>Read the console output first — most answers are right there</li>
+<li>Validate Git credentials/SSH keys haven't expired or rotated</li>
+<li>Confirm the build agent/node is online and has the right labels</li>
+<li>Clean the workspace and rebuild — stale <code>target/</code> or <code>node_modules/</code> causes phantom failures</li>
+<li>Check Maven/npm dependency resolution — a flaky or unreachable repo (Nexus/Artifactory) will fail the build</li>
+</ul>
+<pre class="cmd-block">mvn clean install -X       # verbose output for real error
+git ls-remote               # test credentials/connectivity independent of Jenkins</pre>
+<div class="tip"><strong>Interview angle:</strong> Say you'd distinguish "flaky" (retry-and-move-on) failures from "deterministic" (code/config) failures before spending time debugging.</div>
+</div>
+</details>
+
+<details class="card" id="s11">
+<summary><span><span class="tag cicd">CI/CD</span><span class="q">Pipeline fails only during merge to main — works fine on feature branches</span></span><span class="chev"></span></summary>
+<div class="body">
+<h4>Common causes</h4>
+<ul>
+<li>Merge conflicts that auto-merged cleanly in Git but broke the build semantically</li>
+<li>Branch protection/environment secrets that only exist on <code>main</code>'s pipeline</li>
+<li>A different (usually stricter) pipeline stage runs only on main — e.g. integration tests, security scans</li>
+</ul>
+<h4>Fix</h4>
+<ul>
+<li>Reproduce locally: check out main, merge the feature branch, run the exact same build command</li>
+<li>Compare environment variables/secrets between the branch and main pipelines</li>
+</ul>
+</div>
+</details>
+
+<details class="card" id="s12">
+<summary><span><span class="tag infra">Infra</span><span class="q">Blue-Green Deployment — how does it work and when do you use it?</span></span><span class="chev"></span></summary>
+<div class="body">
+<h4>How it works</h4>
+<ul>
+<li>Two identical environments: <strong>Blue</strong> (live/current) and <strong>Green</strong> (new version)</li>
+<li>Deploy the new version to Green while Blue keeps serving 100% of traffic</li>
+<li>Test Green in isolation (smoke tests, synthetic checks)</li>
+<li>Switch the router/load balancer to send traffic to Green</li>
+<li>Rollback is just switching the router back to Blue — near-instant, no redeploy needed</li>
+</ul>
+<h4>Trade-offs</h4>
+<ul>
+<li>Needs double the infrastructure at cutover time (cost)</li>
+<li>Doesn't catch issues that only show up under real production traffic volume — pair with canary for that</li>
+<li>Stateful services (databases, in-flight sessions) need extra care during the switch</li>
+</ul>
+<div class="tip"><strong>Compare to canary:</strong> canary shifts a small % of real traffic gradually; blue-green shifts 100% at once but rolls back instantly. Know both — interviewers often ask you to pick one for a given scenario.</div>
+</div>
+</details>
+</section>
+
+<section class="category" id="cat-aws2">
+<h2>AWS Services</h2>
+
+<details class="card" id="s13">
+<summary><span><span class="tag aws">AWS</span><span class="q">RDS storage is full</span></span><span class="chev"></span></summary>
+<div class="body">
+<h4>Immediate fix</h4>
+<ul>
+<li>Take a snapshot first if you're going to modify anything risky</li>
+<li>Increase allocated storage (can be done live, with brief I/O impact on some engines)</li>
+<li>Enable Storage Auto Scaling so this doesn't recur</li>
+</ul>
+<h4>Also check</h4>
+<ul>
+<li>Bloated transaction/binlogs — check retention settings</li>
+<li>Runaway temp tables from a bad query</li>
+<li>Old snapshots or unused read replicas holding storage</li>
+</ul>
+<h4>Prevent</h4>
+<ul>
+<li>CloudWatch alarm on <code>FreeStorageSpace</code> at a sensible threshold</li>
+</ul>
+</div>
+</details>
+
+<details class="card" id="s14">
+<summary><span><span class="tag aws">AWS</span><span class="q">S3 Access Denied</span></span><span class="chev"></span></summary>
+<div class="body">
+<h4>Checklist</h4>
+<ul>
+<li>Bucket policy — does it explicitly allow the action for this principal?</li>
+<li>IAM role/user policy — does it grant <code>s3:GetObject</code> (and <code>s3:ListBucket</code> if listing)?</li>
+<li>Remember: an explicit <code>Deny</code> anywhere (bucket policy, IAM policy, SCP, or an S3 Block Public Access setting) always wins over an <code>Allow</code></li>
+<li>Bucket owner vs object owner mismatch (cross-account uploads) — check the object ACL</li>
+<li>KMS-encrypted objects also need <code>kms:Decrypt</code> permission on the key policy, not just S3 permissions</li>
+</ul>
+<h4>Prevent</h4>
+<ul>
+<li>Avoid public buckets unless genuinely required; use bucket policies + IAM roles, not long-lived keys</li>
+</ul>
+</div>
+</details>
+
+<details class="card" id="s15">
+<summary><span><span class="tag infra">Infra</span><span class="q">Terraform plan shows changes you didn't make</span></span><span class="chev"></span></summary>
+<div class="body">
+<h4>Reason</h4>
+<p style="font-size:14.5px; margin-top:6px;">State drift — the real infrastructure was changed outside of Terraform (manual console edit, another pipeline, or the state file is out of sync with reality).</p>
+<h4>Fix</h4>
+<pre class="cmd-block">terraform refresh          # sync state with real-world resources (or `plan -refresh-only`)
+terraform state list       # inspect what Terraform thinks it owns
+terraform import &lt;addr&gt; &lt;id&gt;   # bring an unmanaged resource under management</pre>
+<h4>Prevent</h4>
+<ul>
+<li>Remote backend with locking — S3 + DynamoDB lock table prevents concurrent, conflicting applies</li>
+<li>Ban manual console changes to Terraform-managed resources; enforce via SCPs or tagging conventions</li>
+<li><code>terraform plan</code> in CI on every PR so drift is caught before it compounds</li>
+</ul>
+</div>
+</details>
+
+<details class="card" id="s16">
+<summary><span><span class="tag aws">AWS</span><span class="q">Auto Scaling Group isn't launching new instances under load</span></span><span class="chev"></span></summary>
+<div class="body">
+<h4>Common causes</h4>
+<ul>
+<li>Already at <code>MaxSize</code></li>
+<li>Scaling policy/alarm never actually triggers — check the CloudWatch alarm's metric and threshold</li>
+<li>Launch template/config references an AMI, subnet, or SG that no longer exists → instances fail to launch silently</li>
+<li>No available IPs left in the target subnet</li>
+</ul>
+<pre class="cmd-block">aws autoscaling describe-scaling-activities --auto-scaling-group-name &lt;name&gt;
+# describes exactly why the last scale attempt succeeded or failed</pre>
+</div>
+</details>
+
+</section>
+
+<footer>
+Built from your uploaded scenario sheet, expanded with root causes, diagnostic commands, fixes, and prevention for each — plus a few extra scenarios that come up often in DevOps interviews (ALB 5xx, disk-full, HPA, ASG, NotReady nodes, CI/CD-only-on-main failures).
+</footer>
+</div>
+
+<script>
+// Build the table of contents from the cards actually present
+(function(){
+  var list = document.getElementById('toc-list');
+  document.querySelectorAll('.card').forEach(function(card){
+    var q = card.querySelector('.q');
+    var li = document.createElement('li');
+    var a = document.createElement('a');
+    a.href = '#' + card.id;
+    a.textContent = q.textContent;
+    a.addEventListener('click', function(){ card.open = true; });
+    li.appendChild(a);
+    list.appendChild(li);
+  });
+})();
+
+function toggleTheme(){
+  var root = document.documentElement;
+  var current = root.getAttribute('data-theme');
+  if(current === 'dark'){ root.setAttribute('data-theme','light'); }
+  else if(current === 'light'){ root.removeAttribute('data-theme'); }
+  else { root.setAttribute('data-theme','dark'); }
+}
+</script>
+</body>
+</html>
